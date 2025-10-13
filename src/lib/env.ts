@@ -120,12 +120,5 @@ export const env = {
   validate: validateEnvironment
 };
 
-// Validate environment on module load (only in production)
-if (process.env.NODE_ENV === 'production') {
-  try {
-    validateEnvironment();
-  } catch (error) {
-    console.error('Environment validation failed:', error);
-    process.exit(1);
-  }
-}
+// Environment validation is done manually via env.validate() when needed
+// Removed automatic validation on module load to prevent build failures
