@@ -51,11 +51,24 @@ export function ProfileForm({ user }: ProfileFormProps) {
     const loadProfile = async () => {
       try {
         console.log('Loading profile for user:', user.id)
-        
-        // Verwende API Route für das Laden der Profildaten
-        const response = await fetch(`/api/profile?userId=${user.id}`)
+
+        // Get session token for authorization
+        const supabase = createClient()
+        const { data: { session } } = await supabase.auth.getSession()
+
+        if (!session?.access_token) {
+          throw new Error('No authentication token available')
+        }
+
+        // Use API Route with proper authentication
+        const response = await fetch('/api/profile', {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json'
+          }
+        })
         console.log('API response status:', response.status)
-        
+
         const result = await response.json()
         console.log('API response data:', result)
         
@@ -173,11 +186,19 @@ export function ProfileForm({ user }: ProfileFormProps) {
         throw new Error('User not authenticated')
       }
 
-      // Verwende API Route für Profil-Operationen
+      // Get session token for authorization
+      const { data: { session } } = await supabase.auth.getSession()
+
+      if (!session?.access_token) {
+        throw new Error('No authentication token available')
+      }
+
+      // Use API Route with proper authentication
       console.log('Saving profile via API...')
       const response = await fetch('/api/profile', {
         method: 'PUT',
         headers: {
+          'Authorization': `Bearer ${session.access_token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
