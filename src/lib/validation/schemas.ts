@@ -25,19 +25,33 @@ export const DocumentUploadSchema = z.object({
   description: z.string().optional()
 });
 
-// User profile schemas
+// User profile schemas - Flexible for all profile fields
 export const ProfileUpdateSchema = z.object({
-  firstName: z.string().min(1, 'First name is required').max(100),
-  lastName: z.string().min(1, 'Last name is required').max(100),
-  email: emailSchema,
-  phone: phoneSchema.optional(),
-  countryOfOrigin: z.string().optional(),
-  lastResidenceCountry: z.string().optional(),
-  hasChildren: z.boolean().optional(),
+  user_id: z.string().optional(),
+  email: emailSchema.optional(),
+  updated_at: z.string().optional(),
+  first_name: z.string().optional(),
+  last_name: z.string().optional(),
+  phone: z.string().optional(),
+  gender: z.string().optional(),
+  moved_to_switzerland: z.string().optional(),
+  planning_to_stay: z.string().optional(),
+  country_of_origin: z.string().optional(),
+  last_residence_country: z.string().optional(),
+  date_of_birth: z.string().optional(),
+  living_with: z.string().optional(),
+  home_address: z.string().optional(),
+  postal_code: z.string().optional(),
   municipality: z.string().optional(),
   canton: z.string().optional(),
-  postalCode: swissPostalCodeSchema.optional()
-});
+  has_children: z.boolean().optional(),
+  children_ages: z.string().optional(),
+  current_situation: z.string().optional(),
+  interests: z.string().optional(),
+  primary_language: z.string().optional(),
+  about_me: z.string().optional(),
+  profile_image_url: z.string().optional()
+}).passthrough();
 
 // Task-related schemas
 export const TaskActionSchema = z.object({
