@@ -12,8 +12,16 @@ import { createClient } from '@/lib/supabase/server'
 const profileHandler = async (request: AuthenticatedRequest): Promise<NextResponse> => {
   const user = request.user
   const userId = user.id
+
+  // Create Supabase client with the authenticated user's token
+  const authHeader = request.headers.get('authorization')
+  const token = authHeader?.substring(7) // Remove 'Bearer '
+
   const supabase = await createClient()
-  
+  if (token) {
+    await supabase.auth.setSession({ access_token: token, refresh_token: '' })
+  }
+
   // SIMPLIFIED: Use .single() for cleaner code
   const { data, error } = await supabase
     .from('user_profiles')
@@ -25,9 +33,9 @@ const profileHandler = async (request: AuthenticatedRequest): Promise<NextRespon
     throw createError.database('Failed to fetch profile', error)
   }
 
-  return NextResponse.json({ 
+  return NextResponse.json({
     success: true,
-    data: data || null 
+    data: data || null
   })
 }
 
@@ -36,8 +44,16 @@ const upsertProfileHandler = async (request: AuthenticatedRequest): Promise<Next
   const userId = user.id
   const body = await request.json()
   const profileData = validateRequestBody(ProfileUpdateSchema, body)
+
+  // Create Supabase client with the authenticated user's token
+  const authHeader = request.headers.get('authorization')
+  const token = authHeader?.substring(7) // Remove 'Bearer '
+
   const supabase = await createClient()
-  
+  if (token) {
+    await supabase.auth.setSession({ access_token: token, refresh_token: '' })
+  }
+
   // SIMPLIFIED: Single upsert operation handles both create and update
   const { data, error } = await supabase
     .from('user_profiles')
@@ -45,8 +61,8 @@ const upsertProfileHandler = async (request: AuthenticatedRequest): Promise<Next
       user_id: userId,
       ...profileData,
       updated_at: new Date().toISOString()
-    }, { 
-      onConflict: 'user_id' 
+    }, {
+      onConflict: 'user_id'
     })
     .select()
     .single()
@@ -55,9 +71,9 @@ const upsertProfileHandler = async (request: AuthenticatedRequest): Promise<Next
     throw createError.database('Failed to save profile', error)
   }
 
-  return NextResponse.json({ 
+  return NextResponse.json({
     success: true,
-    data 
+    data
   })
 }
 
