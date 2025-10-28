@@ -234,7 +234,7 @@ export class DocumentDatabase {
 
     for (const docType of this.documentTypes) {
       let score = 0;
-      let matches: string[] = [];
+      const matches: string[] = [];
 
       // Check file patterns (highest priority)
       for (const pattern of docType.filePatterns) {

@@ -332,7 +332,7 @@ export function TaskCard({ task, onStatusChange }: TaskCardProps) {
     const subject = encodeURIComponent('Inquiry about residence permit card - biometric appointment')
     
     // Create email body with canton-specific or generic content
-    let emailBody = `Dear Sir/Madam,
+    const emailBody = `Dear Sir/Madam,
 
 I registered at my local Gemeinde on [DATE] and have not yet received my biometric appointment letter for the residence permit card.
 

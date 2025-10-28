@@ -48,42 +48,99 @@ export function SignUpForm() {
     }
 
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`
+      // ALWAYS use development signup in development mode
+      if (process.env.NODE_ENV === 'development') {
+        // Create user with email confirmation bypassed
+        const { data, error } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            // Disable email confirmation in development
+            data: {
+              skip_email_confirmation: true
+            }
+          }
+        })
+
+        if (error) {
+          throw error
         }
-      })
 
-      if (error) {
-        throw error
-      }
+        // Create user profile immediately
+        if (data.user) {
+          const { error: profileError } = await supabase
+            .from('user_profiles')
+            .insert({
+              user_id: data.user.id,
+              email: formData.email,
+              first_name: formData.firstName,
+              last_name: formData.lastName,
+              phone: formData.phone
+            })
 
-      // Create user profile with the signup data (regardless of email confirmation)
-      if (data.user) {
-        const { error: profileError } = await supabase
-          .from('user_profiles')
-          .insert({
-            user_id: data.user.id,
+          if (profileError) {
+            console.error('Profile creation error:', profileError)
+            // Don't fail the signup if profile creation fails
+          }
+        }
+
+        // Try to sign in immediately after signup
+        try {
+          const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
             email: formData.email,
-            first_name: formData.firstName,
-            last_name: formData.lastName,
-            phone: formData.phone,
-            gender: formData.gender
+            password: formData.password
           })
 
-        if (profileError) {
-          console.error('Error creating profile:', profileError)
+          if (!signInError && signInData.user) {
+            setSuccess('Account created and signed in successfully!')
+            router.push('/dashboard')
+          } else {
+            setSuccess('Account created! Please try logging in.')
+          }
+        } catch (signInErr) {
+          setSuccess('Account created! Please try logging in.')
         }
-      }
-
-      if (data.user && !data.user.email_confirmed_at) {
-        setSuccess('Please check your email for a confirmation link')
       } else {
-        setSuccess('Account created successfully!')
-        // Redirect to dashboard if email is already confirmed
-        router.push('/dashboard')
+        // Production flow with email confirmation
+        const { data, error } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`
+          }
+        })
+
+        if (error) {
+          throw error
+        }
+
+        // Create user profile with the signup data (regardless of email confirmation)
+        if (data.user) {
+          const { error: profileError } = await supabase
+            .from('user_profiles')
+            .insert({
+              user_id: data.user.id,
+              email: formData.email,
+              first_name: formData.firstName,
+              last_name: formData.lastName,
+              phone: formData.phone
+            })
+
+          if (profileError) {
+            console.error('Error creating profile:', profileError)
+            setError(`Profile creation failed: ${profileError.message}`)
+          } else {
+            console.log('Profile created successfully')
+          }
+        }
+
+        if (data.user && !data.user.email_confirmed_at) {
+          setSuccess('Please check your email for a confirmation link')
+        } else {
+          setSuccess('Account created successfully!')
+          router.push('/dashboard')
+        }
       }
 
       setFormData({ firstName: '', lastName: '', gender: '', email: '', phone: '', password: '', confirmPassword: '' })

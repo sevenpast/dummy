@@ -82,3 +82,5 @@ export async function optionalAuth(request: NextRequest): Promise<AuthenticatedU
     return null;
   }
 }
+
+

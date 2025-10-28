@@ -2,36 +2,36 @@
 
 A secure, data-driven platform for expat onboarding in Switzerland, featuring document management, personalized tasks, and GDPR compliance.
 
-## 🚀 Features
+## Features
 
 ### MVP (Current)
-- **Authentication**: Secure user registration and login with Supabase Auth
-- **Document Vault**: Secure document storage with client-side encryption
-- **Dashboard**: Overview of user progress and quick actions
-- **Responsive Design**: Mobile-first UI with Tailwind CSS
+- Authentication: Secure user registration and login with Supabase Auth
+- Document Vault: Secure document storage with client-side encryption
+- Dashboard: Overview of user progress and quick actions
+- Responsive Design: Mobile-first UI with Tailwind CSS
 
 ### Planned Features
-- **AI Document Classification**: Automatic document categorization using Gemini
-- **Personalized Tasks**: Dynamic task recommendations based on user profile
-- **GDPR Compliance**: Full data access, deletion, and portability features
-- **Email Automation**: Automated reminders and notifications
-- **Multi-language Support**: German, English, French, Italian
+- AI Document Classification: Automatic document categorization using Gemini
+- Personalized Tasks: Dynamic task recommendations based on user profile
+- GDPR Compliance: Full data access, deletion, and portability features
+- Email Automation: Automated reminders and notifications
+- Multi-language Support: German, English, French, Italian
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-- **Frontend**: Next.js 15, React 19, TypeScript, Tailwind CSS
-- **Backend**: Supabase (PostgreSQL, Auth, Storage, Edge Functions)
-- **Deployment**: Vercel
-- **Security**: Row-Level Security (RLS), Client-side encryption
+- Frontend: Next.js 15, React 19, TypeScript, Tailwind CSS
+- Backend: Supabase (PostgreSQL, Auth, Storage, Edge Functions)
+- Deployment: Vercel
+- Security: Row-Level Security (RLS), Client-side encryption
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Node.js 18+ 
 - npm or yarn
 - Supabase account
 - Vercel account (for deployment)
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Clone and Install
 
@@ -76,7 +76,7 @@ npm run dev
 
 Visit [http://localhost:3000](http://localhost:3000) to see the application.
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 village/

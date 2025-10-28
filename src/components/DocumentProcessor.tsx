@@ -24,14 +24,6 @@ export default function DocumentProcessor({
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Show error message instead of processing
-    const errorMsg = "Sorry, this function still doesn't work as wished. I am doing my best to fix it as soon as possible.";
-    setError(errorMsg);
-    onError?.(errorMsg);
-    return;
-
-    // Original validation code (commented out)
-    /*
     // Validate file type
     if (file.type !== 'application/pdf') {
       const errorMsg = 'Please select a PDF file';
@@ -79,17 +71,8 @@ export default function DocumentProcessor({
         throw new Error(result.error || 'Failed to process PDF');
       }
 
-      // Enhanced result processing
-      const enhancedResult = {
-        ...result,
-        processing_timestamp: new Date().toISOString(),
-        file_size: file.size,
-        file_type: file.type,
-        user_id: user.id
-      };
-
-      setProcessingResult(enhancedResult);
-      onProcessingComplete?.(enhancedResult);
+      setProcessingResult(result);
+      onProcessingComplete?.(result);
 
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'An error occurred while processing the PDF';
@@ -99,7 +82,6 @@ export default function DocumentProcessor({
     } finally {
       setIsProcessing(false);
     }
-    */
   };
 
   const handleRetry = () => {
@@ -201,13 +183,9 @@ export default function DocumentProcessor({
               <h3 className="text-sm font-medium text-green-800">Document Processed Successfully!</h3>
               <div className="mt-2 text-sm text-green-700">
                 <p>Your document has been analyzed and filled with your profile data.</p>
-                <div className="mt-2 space-y-1">
+                <div className="mt-2">
                   <p><strong>Confidence Score:</strong> {Math.round((processingResult.confidence_score || 0) * 100)}%</p>
                   <p><strong>Processing Time:</strong> {processingResult.processing_time || 'N/A'}</p>
-                  <p><strong>Processing Method:</strong> {processingResult.processing_method || 'N/A'}</p>
-                  <p><strong>Document Type:</strong> {processingResult.document_type || 'N/A'}</p>
-                  <p><strong>Language Detected:</strong> {processingResult.language_detected || 'N/A'}</p>
-                  <p><strong>File Size:</strong> {(processingResult.file_size / 1024).toFixed(1)} KB</p>
                 </div>
               </div>
               <div className="mt-4 flex space-x-3">
@@ -232,31 +210,6 @@ export default function DocumentProcessor({
         </div>
       )}
 
-      {/* Swiss Validation Display */}
-      {processingResult?.swiss_validation && (
-        <div className="bg-blue-50 rounded-lg p-4">
-          <h4 className="text-sm font-medium text-blue-900 mb-3">Swiss Data Validation</h4>
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <div className="flex items-center">
-              <span className={`w-3 h-3 rounded-full mr-2 ${processingResult.swiss_validation.postal_code_valid ? 'bg-green-500' : 'bg-red-500'}`}></span>
-              <span className="text-blue-800">Postal Code</span>
-            </div>
-            <div className="flex items-center">
-              <span className={`w-3 h-3 rounded-full mr-2 ${processingResult.swiss_validation.canton_valid ? 'bg-green-500' : 'bg-red-500'}`}></span>
-              <span className="text-blue-800">Canton</span>
-            </div>
-            <div className="flex items-center">
-              <span className={`w-3 h-3 rounded-full mr-2 ${processingResult.swiss_validation.date_format_valid ? 'bg-green-500' : 'bg-red-500'}`}></span>
-              <span className="text-blue-800">Date Format</span>
-            </div>
-            <div className="flex items-center">
-              <span className={`w-3 h-3 rounded-full mr-2 ${processingResult.swiss_validation.permit_type_valid ? 'bg-green-500' : 'bg-red-500'}`}></span>
-              <span className="text-blue-800">Permit Type</span>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Extracted Data Display */}
       {processingResult?.extracted_data && (
         <div className="bg-gray-50 rounded-lg p-4">
@@ -269,24 +222,6 @@ export default function DocumentProcessor({
               </div>
             ))}
           </div>
-        </div>
-      )}
-
-      {/* Missing Fields Display */}
-      {processingResult?.missing_fields && processingResult.missing_fields.length > 0 && (
-        <div className="bg-yellow-50 rounded-lg p-4">
-          <h4 className="text-sm font-medium text-yellow-900 mb-2">Missing Information</h4>
-          <p className="text-sm text-yellow-800 mb-2">The following fields could not be extracted from your profile:</p>
-          <ul className="text-sm text-yellow-800 space-y-1">
-            {processingResult.missing_fields.map((field: string, index: number) => (
-              <li key={index} className="flex items-start">
-                <svg className="w-4 h-4 mr-2 mt-0.5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
-                {field.replace(/([A-Z])/g, ' $1').trim()}
-              </li>
-            ))}
-          </ul>
         </div>
       )}
 

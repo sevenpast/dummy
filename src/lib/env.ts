@@ -18,8 +18,17 @@ interface EnvironmentConfig {
   // Email Service (Private - Server-side only)
   RESEND_API_KEY: string;
   
+  // PDF Processing (Private - Server-side only)
+  PDFCO_API_KEY: string;
+  STIRLING_PDF_URL: string;
+  STIRLING_PDF_API_KEY?: string;
+  APDF_API_KEY: string;
+  
   // Application
   NODE_ENV: 'development' | 'production' | 'test';
+  
+  // Development flags
+  DISABLE_EMAIL_CONFIRMATION?: string;
 }
 
 type EnvKey = keyof EnvironmentConfig;
@@ -110,11 +119,20 @@ export const env = {
   // Email
   resendApiKey: () => getEnv('RESEND_API_KEY'),
   
+  // PDF Processing
+  pdfCoApiKey: () => getEnv('PDFCO_API_KEY'),
+  stirlingPdfUrl: () => getEnv('STIRLING_PDF_URL'),
+  stirlingPdfApiKey: () => getOptionalEnv('STIRLING_PDF_API_KEY'),
+  apdfApiKey: () => getEnv('APDF_API_KEY'),
+  
   // Application
   nodeEnv: () => getEnv('NODE_ENV'),
   isDevelopment: () => getEnv('NODE_ENV') === 'development',
   isProduction: () => getEnv('NODE_ENV') === 'production',
   isTest: () => getEnv('NODE_ENV') === 'test',
+  
+  // Development flags
+  disableEmailConfirmation: () => getOptionalEnv('DISABLE_EMAIL_CONFIRMATION') === 'true',
   
   // Validation
   validate: validateEnvironment
